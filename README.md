@@ -16,6 +16,8 @@ In a Claude Code cloud session on this repo:
   extracts the items, checks them, asks you about anything unclear, then commits.
 - **Ask about prices:** *"Where did I buy milk cheapest?"*, *"Cheapest pasta of any brand?"*,
   *"Show my egg price history."*
+- **Ask anything else about your history:** *"How much did I spend in October?"*,
+  *"List everything I bought at Aldi"*, *"Chart my weekly grocery spending."*
 - **Fix mistakes:** *"Line 3 on the Kroger receipt from Nov 8 was oat milk, not 2% milk."*
 - **Fill in sizes:** *"The store-brand bread I buy is 20 oz."*
 

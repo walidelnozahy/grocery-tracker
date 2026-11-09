@@ -120,8 +120,8 @@ branch" habit). Before committing, `git fetch origin main` and make sure you're 
 
 ## Workflow B: "Where should I buy X?" / "Where was X cheapest?"
 
-1. Run `scripts/cheapest.py` and answer **only from its output**, never from memory or
-   general knowledge of store prices.
+1. Run `scripts/cheapest.py` and base the answer on its output, never on memory or
+   general knowledge of store prices. (For any other kind of question, see Workflow E.)
    - Specific product: `python scripts/cheapest.py "2% milk"`
    - "Any milk", "cheapest pasta of any brand": add `--any-brand`
    - A whole category ("produce", "poultry"): `--category`
@@ -134,6 +134,32 @@ branch" habit). Before committing, `git fetch origin main` and make sure you're 
    Mention when a price is marked **STALE** (older than 60 days).
    When the output says "per package (size unknown)", say so: those can't be compared by unit price.
    Offer to fill in the missing size (Workflow D).
+
+## Workflow E: any other question about the history
+
+The owner can ask anything about their purchases: "how much did I spend in October?",
+"list everything I bought at Aldi", "what do I buy most often?", "did egg prices go up?",
+"make me a chart of my weekly spending". Answer these from the data.
+
+1. Run `python scripts/build_ledger.py` first so `data/items.csv` is current.
+2. Pick the right source:
+   - **`data/items.csv`**: one row per product purchased, with unit prices. Use it for
+     questions about items, products, categories, brands and prices.
+   - **`data/receipts/*.json`**: use it for **money spent**. Receipt `total` includes tax and
+     non-product lines (bag fees, deposits, order coupons) that are *not* in items.csv, so
+     summing `price_paid` from the CSV under-counts spending.
+   - For "where is X cheapest?", still use `cheapest.py` (Workflow B); it applies the
+     sale/regular/stale/unknown-size rules.
+3. **Compute with code, not in your head.** Write a short Python snippet (the standard
+   `csv`/`json` modules are enough) for any sum, average, count or comparison, and answer from
+   its output. Small lookups ("what did I buy on Nov 8?") can be read straight from the file.
+4. Lists and tables: show them in the reply as a markdown table.
+   Charts: make them as an HTML page/artifact or with a throwaway script in a scratch folder.
+   Don't add plotting libraries to `requirements.txt` and don't commit one-off analysis
+   scripts unless the owner asks to keep them (then put them in `scripts/` with a test).
+5. Say what the answer covers ("based on 14 receipts from Sep 2 to Nov 8") and point out
+   gaps: items with unknown size, lines needing review, STALE prices, or periods with no receipts.
+   Never fill gaps with outside knowledge of prices.
 
 ## Workflow C: "Fix X"
 
