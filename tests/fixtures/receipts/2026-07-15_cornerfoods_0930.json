@@ -1,0 +1,65 @@
+{
+  "id": "2026-07-15_cornerfoods_0930",
+  "store": {
+    "chain": "cornerfoods",
+    "name": "CornerFoods - Main St",
+    "address": null,
+    "city": "Faketown"
+  },
+  "date": "2026-07-15",
+  "time": "09:30",
+  "subtotal": 12.26,
+  "tax": 0.0,
+  "total": 12.26,
+  "payment_type": "card",
+  "image_path": "receipts/2026/2026-07-15_cornerfoods_0930.jpg",
+  "parsed_at": "2026-07-15T10:00:00Z",
+  "notes": "FAKE test receipt; bread size unknown.",
+  "items": [
+    {
+      "line_no": 1,
+      "receipt_text": "CF WHT BREAD",
+      "product_key": "bread-white-sandwich-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 1.99,
+      "regular_price": 1.99,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "medium",
+      "needs_review": true,
+      "review_note": "Loaf size not printed on receipt"
+    },
+    {
+      "line_no": 2,
+      "receipt_text": "CF 2% MILK GAL",
+      "product_key": "milk-2pct-gallon-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 3.29,
+      "regular_price": 3.29,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 3,
+      "receipt_text": "CHKN BRST BNLS",
+      "product_key": "chicken-breast-boneless-skinless",
+      "quantity": 2.0,
+      "unit_of_sale": "lb",
+      "price_paid": 6.98,
+      "regular_price": 6.98,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": true,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}

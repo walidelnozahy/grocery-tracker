@@ -1,0 +1,65 @@
+{
+  "id": "2026-10-20_valuegrocer_1805",
+  "store": {
+    "chain": "valuegrocer",
+    "name": "ValueGrocer - Campus",
+    "address": "5 College Ave",
+    "city": "Faketown"
+  },
+  "date": "2026-10-20",
+  "time": "18:05",
+  "subtotal": 6.73,
+  "tax": 0.0,
+  "total": 6.73,
+  "payment_type": "cash",
+  "image_path": "receipts/2026/2026-10-20_valuegrocer_1805.jpg",
+  "parsed_at": "2026-10-20T19:00:00Z",
+  "notes": "FAKE test receipt with a sale discount line (VG SAVINGS -0.80) attached to the milk.",
+  "items": [
+    {
+      "line_no": 1,
+      "receipt_text": "VG 2% MILK 1GAL",
+      "product_key": "milk-2pct-gallon-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 2.99,
+      "regular_price": 3.79,
+      "discount": 0.8,
+      "on_sale": true,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 2,
+      "receipt_text": "VG SPAGHETTI 16OZ",
+      "product_key": "pasta-spaghetti-16oz-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 1.25,
+      "regular_price": 1.25,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 3,
+      "receipt_text": "VG PB CREAMY 16OZ",
+      "product_key": "peanut-butter-creamy-16oz-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 2.49,
+      "regular_price": 2.49,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}

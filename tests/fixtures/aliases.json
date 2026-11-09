@@ -1,0 +1,18 @@
+{
+  "freshmart": {
+    "FM 2% MILK GAL": "milk-2pct-gallon-store-brand",
+    "BRANDX 2% HALF GAL": "milk-2pct-half-gallon-brandx",
+    "BANANAS": "bananas",
+    "FM LG EGGS 12CT": "eggs-large-12ct-store-brand"
+  },
+  "valuegrocer": {
+    "VG 2% MILK 1GAL": "milk-2pct-gallon-store-brand",
+    "VG SPAGHETTI 16OZ": "pasta-spaghetti-16oz-store-brand",
+    "VG PB CREAMY 16OZ": "peanut-butter-creamy-16oz-store-brand"
+  },
+  "cornerfoods": {
+    "CF WHT BREAD": "bread-white-sandwich-store-brand",
+    "CF 2% MILK GAL": "milk-2pct-gallon-store-brand",
+    "CHKN BRST BNLS": "chicken-breast-boneless-skinless"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "milk-2pct-gallon-store-brand": {
+    "name": "Milk, 2% reduced fat, 1 gallon (store brand)",
+    "category": "milk", "brand": null, "is_store_brand": true,
+    "size_value": 1, "size_unit": "gal"
+  },
+  "milk-2pct-half-gallon-brandx": {
+    "name": "Milk, 2% reduced fat, half gallon (BrandX)",
+    "category": "milk", "brand": "BrandX", "is_store_brand": false,
+    "size_value": 64, "size_unit": "fl_oz"
+  },
+  "eggs-large-12ct-store-brand": {
+    "name": "Eggs, large, 12 count (store brand)",
+    "category": "eggs", "brand": null, "is_store_brand": true,
+    "size_value": 12, "size_unit": "count"
+  },
+  "bananas": {
+    "name": "Bananas",
+    "category": "produce_fruit", "brand": null, "is_store_brand": false,
+    "size_value": null, "size_unit": null
+  },
+  "pasta-spaghetti-16oz-store-brand": {
+    "name": "Pasta, spaghetti, 16 oz (store brand)",
+    "category": "pasta", "brand": null, "is_store_brand": true,
+    "size_value": 16, "size_unit": "oz"
+  },
+  "peanut-butter-creamy-16oz-store-brand": {
+    "name": "Peanut butter, creamy, 16 oz (store brand)",
+    "category": "peanut_butter", "brand": null, "is_store_brand": true,
+    "size_value": 16, "size_unit": "oz"
+  },
+  "bread-white-sandwich-store-brand": {
+    "name": "Bread, white sandwich loaf (store brand)",
+    "category": "bread", "brand": null, "is_store_brand": true,
+    "size_value": null, "size_unit": null
+  },
+  "chicken-breast-boneless-skinless": {
+    "name": "Chicken breast, boneless skinless",
+    "category": "poultry", "brand": null, "is_store_brand": false,
+    "size_value": null, "size_unit": null
+  }
+}

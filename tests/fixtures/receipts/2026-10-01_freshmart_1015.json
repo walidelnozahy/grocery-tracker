@@ -1,0 +1,80 @@
+{
+  "id": "2026-10-01_freshmart_1015",
+  "store": {
+    "chain": "freshmart",
+    "name": "FreshMart - Elm Street",
+    "address": "100 Elm St",
+    "city": "Faketown"
+  },
+  "date": "2026-10-01",
+  "time": "10:15",
+  "subtotal": 10.4,
+  "tax": 0.0,
+  "total": 10.4,
+  "payment_type": "card",
+  "image_path": "receipts/2026/2026-10-01_freshmart_1015.jpg",
+  "parsed_at": "2026-10-01T12:00:00Z",
+  "notes": "FAKE test receipt with a weighed produce item.",
+  "items": [
+    {
+      "line_no": 1,
+      "receipt_text": "FM 2% MILK GAL",
+      "product_key": "milk-2pct-gallon-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 3.49,
+      "regular_price": 3.49,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 2,
+      "receipt_text": "BRANDX 2% HALF GAL",
+      "product_key": "milk-2pct-half-gallon-brandx",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 2.5,
+      "regular_price": 2.5,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 3,
+      "receipt_text": "BANANAS",
+      "product_key": "bananas",
+      "quantity": 2.4,
+      "unit_of_sale": "lb",
+      "price_paid": 1.42,
+      "regular_price": 1.42,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": true,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 4,
+      "receipt_text": "FM LG EGGS 12CT",
+      "product_key": "eggs-large-12ct-store-brand",
+      "quantity": 1,
+      "unit_of_sale": "each",
+      "price_paid": 2.99,
+      "regular_price": 2.99,
+      "discount": 0.0,
+      "on_sale": false,
+      "weighed": false,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}
