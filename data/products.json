@@ -232,8 +232,8 @@
     "size_value": 1,
     "size_unit": "count"
   },
-  "tv-65in-vizio-4k-qled": {
-    "name": "TV, Vizio 65\" 4K QLED",
+  "tv-85in-vizio-4k-qled": {
+    "name": "TV, Vizio 85\" 4K QLED",
     "category": "tvs",
     "brand": "Vizio",
     "is_store_brand": false,

@@ -39,7 +39,9 @@ Run the tests with `python -m pytest -q`.
 - **Chain slug** (`store.chain`, also the top-level key in `aliases.json`): lowercase, hyphens,
   no punctuation. "Trader Joe's" → `trader-joes`, "H-E-B" → `heb`, "Kroger" → `kroger`.
   Check existing receipts/aliases and reuse the slug already in use for that chain.
-- **store.name**: human-readable, location included: `"Kroger - Main St"`.
+- **store.name**: human-readable, with the location when known: `"Kroger - Main St"`.
+  The location is **optional**: if it isn't printed and the owner doesn't know or doesn't care,
+  use just the chain name (`"Costco"`) with `address`/`city` null. Never guess it from GPS data.
 - **Receipt id / file names**: `YYYY-MM-DD_<chain>_HHMM` using the time printed on the receipt
   (24-hour). If two receipts collide, add `_2`. Photo: `receipts/YYYY/<id>.jpg` (keep the original
   extension if it is png/heic/webp; don't convert). JSON: `data/receipts/<id>.json`.
@@ -88,6 +90,17 @@ See `schema/receipt.schema.json` for the exact shape. Key points:
   (e.g. which product an abbreviation means), `low` if you're guessing.
   Set `needs_review: true` + a `review_note` for anything the owner should confirm.
 
+## When something is unclear: ask once, then do your best
+
+If you can't read something clearly (glare, blur, cut-off text) or can't tell which store,
+**ask the owner once**, listing the specific lines/tags and what you think they say.
+- If the owner answers, use the answer.
+- If the owner doesn't know either, **do your best and carry on**: record your best reading,
+  set `confidence` to `medium` or `low`, set `needs_review: false` (the owner has already seen it),
+  write `review_note: "Owner unsure. Best reading: ..."`, and commit. Don't ask about it again.
+- Zoom in and boost contrast on the photo before deciding; say which way you went and why.
+This never applies to money that doesn't add up on a receipt: report the gap and let the owner decide.
+
 ## Photos: always save through `save_photo.py`
 
 Phone photos contain hidden metadata, **including the GPS location**. Never copy a photo into
@@ -131,6 +144,7 @@ pillow-heif) and zoom/crop into small print rather than guessing.
    If there are errors, or any line has `needs_review`/low confidence, or the totals don't match:
    **stop and ask the owner before committing.** List the specific lines (line number, receipt
    text, what you read, what you're unsure about). Fix, then re-validate.
+   (If the owner doesn't know either, follow "When something is unclear" above.)
 6. **Build and commit**:
    ```
    python scripts/build_ledger.py
@@ -152,8 +166,9 @@ One photo can show several tags; record each as one entry in `items`.
 
 1. Look at the photo carefully (zoom into small print). Work out the **store chain** from the tag's
    style or text (e.g. "Rollback" = Walmart, "Comp Value"/"My Best Buy" = Best Buy, Costco's white
-   tags with item number + "PRICE PER OUNCE"). If you're not sure which chain, or which branch/
-   location, **ask**. Never guess the location from GPS data.
+   tags with item number + "PRICE PER OUNCE"). If you're not sure which chain, **ask**.
+   The branch/location is optional: ask once in the same message as any other questions; if the
+   owner doesn't know or doesn't care, record just the chain name. Never guess it from GPS data.
 2. `python scripts/save_photo.py PHOTO --kind price_tag --chain <slug>`. Date and time come from
    the photo. If the photo has no date, ask the owner and pass `--date`/`--time`.
 3. Write `data/price_tags/<id>.json` per `schema/price_tag.schema.json`:
@@ -176,7 +191,8 @@ One photo can show several tags; record each as one entry in `items`.
    new products. If a tag shows a size for an existing product with `size_value: null`, add it
    and mention it.
 5. `python scripts/validate.py data/price_tags/<id>.json`. If anything is unclear (glare,
-   blurry digits, unknown store or location), **ask before committing**, listing the specific tags.
+   blurry digits, unknown store), **ask before committing**, listing the specific tags; if the
+   owner doesn't know, follow "When something is unclear" above.
 6. Build and commit, same as Workflow A step 6, but:
    `git add price_tags/ data/` and message `Add price tags: <Store name> <YYYY-MM-DD> (<n> items)`.
 
