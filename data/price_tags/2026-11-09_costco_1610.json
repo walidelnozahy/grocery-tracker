@@ -1,0 +1,35 @@
+{
+  "id": "2026-11-09_costco_1610",
+  "store": {
+    "chain": "costco",
+    "name": "Costco",
+    "address": null,
+    "city": null
+  },
+  "date": "2026-11-09",
+  "time": "16:10",
+  "image_path": "price_tags/2026/2026-11-09_costco_1610.jpg",
+  "parsed_at": "2026-11-14T01:50:00Z",
+  "notes": "Date/time from photo metadata. Tag was mounted upside down on the pallet rack.",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "NESCAFE TASTERS CHOICE HOUSE BLEND INSTANT COFFEE 14 OUNCES",
+      "product_key": "coffee-instant-house-blend-14oz-nescafe",
+      "price": 21.99,
+      "price_unit": "each",
+      "regular_price": 21.99,
+      "on_sale": false,
+      "sale_label": null,
+      "sale_ends": null,
+      "printed_unit_price": {
+        "value": 1.571,
+        "per": "oz"
+      },
+      "store_item_id": "1244454",
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}

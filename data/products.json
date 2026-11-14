@@ -1,127 +1,243 @@
 {
   "milk-2pct-gallon-store-brand": {
     "name": "Milk, 2% reduced fat, 1 gallon (store brand)",
-    "category": "milk", "brand": null, "is_store_brand": true,
-    "size_value": 1, "size_unit": "gal"
+    "category": "milk",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 1,
+    "size_unit": "gal"
   },
   "milk-whole-gallon-store-brand": {
     "name": "Milk, whole, 1 gallon (store brand)",
-    "category": "milk", "brand": null, "is_store_brand": true,
-    "size_value": 1, "size_unit": "gal"
+    "category": "milk",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 1,
+    "size_unit": "gal"
   },
   "eggs-large-12ct-store-brand": {
     "name": "Eggs, large, 12 count (store brand)",
-    "category": "eggs", "brand": null, "is_store_brand": true,
-    "size_value": 12, "size_unit": "count"
+    "category": "eggs",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 12,
+    "size_unit": "count"
   },
   "bread-white-sandwich-store-brand": {
     "name": "Bread, white sandwich loaf (store brand)",
-    "category": "bread", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "bread",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "bread-wheat-sandwich-store-brand": {
     "name": "Bread, wheat sandwich loaf (store brand)",
-    "category": "bread", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "bread",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "rice-long-grain-white-store-brand": {
     "name": "Rice, long grain white (store brand)",
-    "category": "rice", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "rice",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "pasta-spaghetti-16oz-store-brand": {
     "name": "Pasta, spaghetti, 16 oz (store brand)",
-    "category": "pasta", "brand": null, "is_store_brand": true,
-    "size_value": 16, "size_unit": "oz"
+    "category": "pasta",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 16,
+    "size_unit": "oz"
   },
   "pasta-penne-16oz-store-brand": {
     "name": "Pasta, penne, 16 oz (store brand)",
-    "category": "pasta", "brand": null, "is_store_brand": true,
-    "size_value": 16, "size_unit": "oz"
+    "category": "pasta",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 16,
+    "size_unit": "oz"
   },
   "pasta-sauce-marinara-24oz-store-brand": {
     "name": "Pasta sauce, marinara, 24 oz jar (store brand)",
-    "category": "pasta_sauce", "brand": null, "is_store_brand": true,
-    "size_value": 24, "size_unit": "oz"
+    "category": "pasta_sauce",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 24,
+    "size_unit": "oz"
   },
   "olive-oil-extra-virgin-store-brand": {
     "name": "Olive oil, extra virgin (store brand)",
-    "category": "cooking_oil", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "cooking_oil",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "butter-salted-16oz-store-brand": {
     "name": "Butter, salted, 1 lb (store brand)",
-    "category": "butter", "brand": null, "is_store_brand": true,
-    "size_value": 16, "size_unit": "oz"
+    "category": "butter",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 16,
+    "size_unit": "oz"
   },
   "bananas": {
     "name": "Bananas",
-    "category": "produce_fruit", "brand": null, "is_store_brand": false,
-    "size_value": null, "size_unit": null
+    "category": "produce_fruit",
+    "brand": null,
+    "is_store_brand": false,
+    "size_value": null,
+    "size_unit": null
   },
   "apples-gala": {
     "name": "Apples, Gala",
-    "category": "produce_fruit", "brand": null, "is_store_brand": false,
-    "size_value": null, "size_unit": null
+    "category": "produce_fruit",
+    "brand": null,
+    "is_store_brand": false,
+    "size_value": null,
+    "size_unit": null
   },
   "onions-yellow": {
     "name": "Onions, yellow",
-    "category": "produce_vegetables", "brand": null, "is_store_brand": false,
-    "size_value": null, "size_unit": null
+    "category": "produce_vegetables",
+    "brand": null,
+    "is_store_brand": false,
+    "size_value": null,
+    "size_unit": null
   },
   "chicken-breast-boneless-skinless": {
     "name": "Chicken breast, boneless skinless",
-    "category": "poultry", "brand": null, "is_store_brand": false,
-    "size_value": null, "size_unit": null
+    "category": "poultry",
+    "brand": null,
+    "is_store_brand": false,
+    "size_value": null,
+    "size_unit": null
   },
   "beef-ground-80-20": {
     "name": "Ground beef, 80/20",
-    "category": "meat", "brand": null, "is_store_brand": false,
-    "size_value": null, "size_unit": null
+    "category": "meat",
+    "brand": null,
+    "is_store_brand": false,
+    "size_value": null,
+    "size_unit": null
   },
   "oats-old-fashioned-store-brand": {
     "name": "Oats, old fashioned rolled (store brand)",
-    "category": "oats", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "oats",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "peanut-butter-creamy-16oz-store-brand": {
     "name": "Peanut butter, creamy, 16 oz (store brand)",
-    "category": "peanut_butter", "brand": null, "is_store_brand": true,
-    "size_value": 16, "size_unit": "oz"
+    "category": "peanut_butter",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 16,
+    "size_unit": "oz"
   },
   "cheese-cheddar-shredded-8oz-store-brand": {
     "name": "Cheese, cheddar, shredded, 8 oz (store brand)",
-    "category": "cheese", "brand": null, "is_store_brand": true,
-    "size_value": 8, "size_unit": "oz"
+    "category": "cheese",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 8,
+    "size_unit": "oz"
   },
   "yogurt-greek-plain-32oz-store-brand": {
     "name": "Yogurt, Greek, plain, 32 oz tub (store brand)",
-    "category": "yogurt", "brand": null, "is_store_brand": true,
-    "size_value": 32, "size_unit": "oz"
+    "category": "yogurt",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 32,
+    "size_unit": "oz"
   },
   "beans-black-canned-store-brand": {
     "name": "Black beans, canned (store brand)",
-    "category": "beans", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "beans",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "orange-juice-52floz-store-brand": {
     "name": "Orange juice, 52 fl oz (store brand)",
-    "category": "juice", "brand": null, "is_store_brand": true,
-    "size_value": 52, "size_unit": "fl_oz"
+    "category": "juice",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 52,
+    "size_unit": "fl_oz"
   },
   "coffee-ground-medium-roast-store-brand": {
     "name": "Coffee, ground, medium roast (store brand)",
-    "category": "coffee", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "coffee",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "toilet-paper-store-brand": {
     "name": "Toilet paper (store brand)",
-    "category": "toilet_paper", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "toilet_paper",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
   },
   "paper-towels-store-brand": {
     "name": "Paper towels (store brand)",
-    "category": "paper_towels", "brand": null, "is_store_brand": true,
-    "size_value": null, "size_unit": null
+    "category": "paper_towels",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": null,
+    "size_unit": null
+  },
+  "pesto-basil-22oz-store-brand": {
+    "name": "Pesto, Italian basil, 22 oz jar (store brand)",
+    "category": "pasta_sauce",
+    "brand": null,
+    "is_store_brand": true,
+    "size_value": 22,
+    "size_unit": "oz"
+  },
+  "coffee-instant-house-blend-14oz-nescafe": {
+    "name": "Coffee, instant, House Blend, 14 oz (Nescafe Taster's Choice)",
+    "category": "coffee",
+    "brand": "Nescafe Taster's Choice",
+    "is_store_brand": false,
+    "size_value": 14,
+    "size_unit": "oz"
+  },
+  "tv-65in-samsung-un65m80hafxza": {
+    "name": "TV, Samsung 65\" M80H Mini LED 4K UHD Smart Tizen TV (2026)",
+    "category": "tvs",
+    "brand": "Samsung",
+    "model": "UN65M80HAFXZA",
+    "is_store_brand": false,
+    "size_value": 1,
+    "size_unit": "count"
+  },
+  "tv-75in-samsung-m70": {
+    "name": "TV, Samsung 75\" M70",
+    "category": "tvs",
+    "brand": "Samsung",
+    "is_store_brand": false,
+    "size_value": 1,
+    "size_unit": "count"
+  },
+  "tv-65in-vizio-4k-qled": {
+    "name": "TV, Vizio 65\" 4K QLED",
+    "category": "tvs",
+    "brand": "Vizio",
+    "is_store_brand": false,
+    "size_value": 1,
+    "size_unit": "count"
   }
 }

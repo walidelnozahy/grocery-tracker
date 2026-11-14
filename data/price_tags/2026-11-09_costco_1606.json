@@ -1,0 +1,35 @@
+{
+  "id": "2026-11-09_costco_1606",
+  "store": {
+    "chain": "costco",
+    "name": "Costco",
+    "address": null,
+    "city": null
+  },
+  "date": "2026-11-09",
+  "time": "16:06",
+  "image_path": "price_tags/2026/2026-11-09_costco_1606.jpg",
+  "parsed_at": "2026-11-14T01:50:00Z",
+  "notes": "Date/time from photo metadata. Tag also shows a print date of 11/03/26.",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "KIRKLAND SIGNATURE ITALIAN BASIL PESTO 22 OUNCES",
+      "product_key": "pesto-basil-22oz-store-brand",
+      "price": 9.99,
+      "price_unit": "each",
+      "regular_price": 9.99,
+      "on_sale": false,
+      "sale_label": null,
+      "sale_ends": null,
+      "printed_unit_price": {
+        "value": 0.454,
+        "per": "oz"
+      },
+      "store_item_id": "990551",
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}

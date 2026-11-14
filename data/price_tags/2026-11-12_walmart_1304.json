@@ -1,0 +1,32 @@
+{
+  "id": "2026-11-12_walmart_1304",
+  "store": {
+    "chain": "walmart",
+    "name": "Walmart",
+    "address": null,
+    "city": null
+  },
+  "date": "2026-11-12",
+  "time": "13:04",
+  "image_path": "price_tags/2026/2026-11-12_walmart_1304.jpg",
+  "parsed_at": "2026-11-14T01:50:00Z",
+  "notes": "Date/time from photo metadata. Tag shows '+CRV' (California electronic waste fee, added at checkout).",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "75 SAMSUNG M70 TV",
+      "product_key": "tv-75in-samsung-m70",
+      "price": 498.0,
+      "price_unit": "each",
+      "regular_price": 648.0,
+      "on_sale": true,
+      "sale_label": "Rollback",
+      "sale_ends": null,
+      "printed_unit_price": null,
+      "store_item_id": null,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}

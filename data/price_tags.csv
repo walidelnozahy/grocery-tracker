@@ -1,1 +1,6 @@
 date,store_chain,store_name,product_key,product_name,category,brand,model,is_store_brand,price,price_unit,regular_price,on_sale,sale_label,sale_ends,unit_price,unit_price_basis,store_item_id,tag_id
+2026-11-09,best-buy,Best Buy,tv-65in-samsung-un65m80hafxza,"TV, Samsung 65"" M80H Mini LED 4K UHD Smart Tizen TV (2026)",tvs,Samsung,UN65M80HAFXZA,false,499.99,each,799.99,true,Black Friday Deal,,499.9900,count,6671594,2026-11-09_best-buy_1732
+2026-11-09,costco,Costco,pesto-basil-22oz-store-brand,"Pesto, Italian basil, 22 oz jar (store brand)",pasta_sauce,,,true,9.99,each,9.99,false,,,0.4541,oz,990551,2026-11-09_costco_1606
+2026-11-09,costco,Costco,coffee-instant-house-blend-14oz-nescafe,"Coffee, instant, House Blend, 14 oz (Nescafe Taster's Choice)",coffee,Nescafe Taster's Choice,,false,21.99,each,21.99,false,,,1.5707,oz,1244454,2026-11-09_costco_1610
+2026-11-12,walmart,Walmart,tv-65in-vizio-4k-qled,"TV, Vizio 65"" 4K QLED",tvs,Vizio,,false,668.00,each,668.00,false,,,668.0000,count,,2026-11-12_walmart_1302
+2026-11-12,walmart,Walmart,tv-75in-samsung-m70,"TV, Samsung 75"" M70",tvs,Samsung,,false,498.00,each,648.00,true,Rollback,,498.0000,count,,2026-11-12_walmart_1304

@@ -1,1 +1,16 @@
-{}
+{
+  "costco": {
+    "KIRKLAND SIGNATURE ITALIAN BASIL PESTO 22 OUNCES": "pesto-basil-22oz-store-brand",
+    "#990551": "pesto-basil-22oz-store-brand",
+    "NESCAFE TASTERS CHOICE HOUSE BLEND INSTANT COFFEE 14 OUNCES": "coffee-instant-house-blend-14oz-nescafe",
+    "#1244454": "coffee-instant-house-blend-14oz-nescafe"
+  },
+  "best-buy": {
+    "Samsung - 65\" Class M80H Series Mini LED 4K UHD SamsungVision AI Smart Tizen TV (2026)": "tv-65in-samsung-un65m80hafxza",
+    "#6671594": "tv-65in-samsung-un65m80hafxza"
+  },
+  "walmart": {
+    "75 SAMSUNG M70 TV": "tv-75in-samsung-m70",
+    "65 VIZIO 4K QLED TV": "tv-65in-vizio-4k-qled"
+  }
+}

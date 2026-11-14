@@ -1,0 +1,32 @@
+{
+  "id": "2026-11-12_walmart_1302",
+  "store": {
+    "chain": "walmart",
+    "name": "Walmart",
+    "address": null,
+    "city": null
+  },
+  "date": "2026-11-12",
+  "time": "13:02",
+  "image_path": "price_tags/2026/2026-11-12_walmart_1302.jpg",
+  "parsed_at": "2026-11-14T01:50:00Z",
+  "notes": "Date/time from photo metadata. Heavy glare on the tag.",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "65 VIZIO 4K QLED TV",
+      "product_key": "tv-65in-vizio-4k-qled",
+      "price": 668.0,
+      "price_unit": "each",
+      "regular_price": 668.0,
+      "on_sale": false,
+      "sale_label": null,
+      "sale_ends": null,
+      "printed_unit_price": null,
+      "store_item_id": null,
+      "confidence": "low",
+      "needs_review": true,
+      "review_note": "Glare: screen size could be 65 or 85 inches, and the price looks like $668.00 but the first digit is partly covered."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "2026-11-09_best-buy_1732",
+  "store": {
+    "chain": "best-buy",
+    "name": "Best Buy",
+    "address": null,
+    "city": null
+  },
+  "date": "2026-11-09",
+  "time": "17:32",
+  "image_path": "price_tags/2026/2026-11-09_best-buy_1732.jpg",
+  "parsed_at": "2026-11-14T01:50:00Z",
+  "notes": "Date/time from photo metadata. regular_price is Best Buy's printed 'Comp Value' ($799.99), a comparison price that may not be what the store normally charged. Tag says 'Save $300'.",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "Samsung - 65\" Class M80H Series Mini LED 4K UHD SamsungVision AI Smart Tizen TV (2026)",
+      "product_key": "tv-65in-samsung-un65m80hafxza",
+      "price": 499.99,
+      "price_unit": "each",
+      "regular_price": 799.99,
+      "on_sale": true,
+      "sale_label": "Black Friday Deal",
+      "sale_ends": null,
+      "printed_unit_price": null,
+      "store_item_id": "6671594",
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}
