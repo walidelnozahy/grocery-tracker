@@ -1,0 +1,67 @@
+{
+  "id": "2026-11-05_valuegrocer_0900",
+  "store": {
+    "chain": "valuegrocer",
+    "name": "ValueGrocer - Campus",
+    "address": "5 College Ave",
+    "city": "Faketown"
+  },
+  "date": "2026-11-05",
+  "time": "09:00",
+  "image_path": "price_tags/2026/2026-11-05_valuegrocer_0900.jpg",
+  "parsed_at": "2026-11-05T10:00:00Z",
+  "notes": "FAKE test price tag photo with sale tags.",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "VG 2% MILK GALLON",
+      "product_key": "milk-2pct-gallon-store-brand",
+      "price": 2.79,
+      "price_unit": "each",
+      "regular_price": 3.79,
+      "on_sale": true,
+      "sale_label": "Weekly Special",
+      "sale_ends": "2026-11-11",
+      "printed_unit_price": null,
+      "store_item_id": null,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 2,
+      "tag_text": "VG WHITE BREAD",
+      "product_key": "bread-white-sandwich-store-brand",
+      "price": 2.19,
+      "price_unit": "each",
+      "regular_price": 2.19,
+      "on_sale": false,
+      "sale_label": null,
+      "sale_ends": null,
+      "printed_unit_price": {
+        "value": 0.11,
+        "per": "oz"
+      },
+      "store_item_id": null,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 3,
+      "tag_text": "BRANDZ 55 4K TV",
+      "product_key": "tv-55in-4k-brandz",
+      "price": 299.99,
+      "price_unit": "each",
+      "regular_price": 399.99,
+      "on_sale": true,
+      "sale_label": "Rollback",
+      "sale_ends": null,
+      "printed_unit_price": null,
+      "store_item_id": "BZ-55X-01",
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}

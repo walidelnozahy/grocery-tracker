@@ -1,7 +1,7 @@
-"""Check receipt JSON files for mistakes and private data.
+"""Check receipt and price-tag JSON files for mistakes and private data.
 
 Usage:
-    python scripts/validate.py                 # check every receipt in data/receipts/
+    python scripts/validate.py                 # check every file in data/receipts/ and data/price_tags/
     python scripts/validate.py FILE [FILE...]  # check only these files
 
 ERRORS make the script exit with code 1 (fix them before committing).
@@ -17,9 +17,10 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-from common import Paths, load_json, receipt_files
+from common import Paths, load_json, price_tag_files, receipt_files
 
 MONEY_TOLERANCE = 0.05   # subtotal / total may differ from our sums by up to 5 cents
+UNIT_PRICE_TOLERANCE = 0.03  # a tag's printed unit price may differ from ours by 3% (rounding)
 LINE_TOLERANCE = 0.01    # regular_price - discount must equal price_paid within 1 cent
 
 # ---------------------------------------------------------------- privacy checks
@@ -70,6 +71,9 @@ def check_shared_data(products, aliases, unit_basis):
         for field in ("name", "category", "brand", "is_store_brand", "size_value", "size_unit"):
             if field not in p:
                 errors.append(f"products.json: '{key}' is missing '{field}'")
+        unknown = set(p) - {"name", "category", "brand", "is_store_brand", "size_value", "size_unit", "model"}
+        if unknown:
+            errors.append(f"products.json: '{key}' has unknown field(s): {', '.join(sorted(unknown))}")
         basis = unit_basis["categories"].get(p.get("category"))
         if basis is None:
             warnings.append(f"products.json: '{key}' has category '{p.get('category')}' "
@@ -91,6 +95,80 @@ def check_shared_data(products, aliases, unit_basis):
     return errors, warnings
 
 
+# ---------------------------------------------------------------- shared per-file checks
+
+def check_names(path, record, photo_folder, root, errors, warnings):
+    """id, file name, date and photo path must all agree."""
+    stem = Path(path).stem
+    if record["id"] != stem:
+        errors.append(f"id '{record['id']}' does not match file name '{stem}'")
+    expected_prefix = f"{record['date']}_{record['store']['chain']}_{record['time'].replace(':', '')}"
+    if not record["id"].startswith(expected_prefix):
+        errors.append(f"id should start with '{expected_prefix}' (date_chain_HHMM)")
+    try:
+        datetime.strptime(record["date"], "%Y-%m-%d")
+    except ValueError:
+        errors.append(f"date '{record['date']}' is not a real date")
+    image = record["image_path"]
+    if Path(image).stem != record["id"]:
+        errors.append(f"image_path '{image}' should be named after the id '{record['id']}'")
+    if not image.startswith(f"{photo_folder}/{record['date'][:4]}/"):
+        errors.append(f"image_path should be in {photo_folder}/{record['date'][:4]}/")
+    if not (root / image).exists():
+        warnings.append(f"photo not found at {image}")
+
+
+def schema_problems(record, schema):
+    errors = []
+    found = sorted(Draft202012Validator(schema).iter_errors(record), key=lambda e: list(e.path))
+    for e in found:
+        where = "$" + "".join(f"[{p}]" if isinstance(p, int) else f".{p}" for p in e.path)
+        errors.append(f"SCHEMA: {where}: {e.message}")
+    return errors
+
+
+def unit_factor(unit, unit_basis):
+    """(dimension, size of one `unit` in the dimension's base unit), or None."""
+    if unit in unit_basis["units"]:
+        u = unit_basis["units"][unit]
+        return u["dimension"], u["to_base"]
+    if unit in unit_basis["bases"]:
+        b = unit_basis["bases"][unit]
+        return b["dimension"], b["base_amount"]
+    return None
+
+
+def check_printed_unit_price(label, item, product, unit_basis, warnings):
+    """Compare the unit price printed on a tag with the one implied by our package size.
+
+    A mismatch usually means the size in products.json is wrong (or the tag was misread).
+    If our size is unknown, suggest the size the tag implies.
+    """
+    printed = item["printed_unit_price"]
+    if not printed or printed["value"] <= 0:
+        return
+    per = unit_factor(printed["per"], unit_basis)
+    if item["price_unit"] in ("lb", "kg"):
+        have = unit_factor(item["price_unit"], unit_basis)
+        amount = 1  # the price is for one lb/kg
+    elif product.get("size_value") is not None and product.get("size_unit"):
+        have = unit_factor(product["size_unit"], unit_basis)
+        amount = product["size_value"]
+    else:
+        implied = item["price"] / printed["value"]
+        warnings.append(f"{label}: package size unknown; the tag's unit price implies about "
+                        f"{implied:.3g} {printed['per']}. Consider adding it to products.json.")
+        return
+    if per is None or have is None or per[0] != have[0]:
+        warnings.append(f"{label}: printed unit price is per {printed['per']}, which can't be "
+                        "compared with this product's size unit")
+        return
+    ours = item["price"] / (amount * have[1] / per[1])
+    if abs(ours - printed["value"]) > UNIT_PRICE_TOLERANCE * printed["value"]:
+        warnings.append(f"{label}: tag says ${printed['value']:g} per {printed['per']} but our size "
+                        f"gives ${ours:.3f}. Check the package size in products.json.")
+
+
 # ---------------------------------------------------------------- one receipt
 
 def check_receipt(path, receipt, schema, products, aliases, unit_basis, root):
@@ -98,31 +176,12 @@ def check_receipt(path, receipt, schema, products, aliases, unit_basis, root):
 
     errors += privacy_problems(receipt)
 
-    schema_errors = sorted(Draft202012Validator(schema).iter_errors(receipt), key=lambda e: list(e.path))
-    for e in schema_errors:
-        where = "$" + "".join(f"[{p}]" if isinstance(p, int) else f".{p}" for p in e.path)
-        errors.append(f"SCHEMA: {where}: {e.message}")
+    schema_errors = schema_problems(receipt, schema)
+    errors += schema_errors
     if schema_errors:
         return errors, warnings  # the checks below assume the shape is right
 
-    # --- id / file name / date consistency
-    stem = Path(path).stem
-    if receipt["id"] != stem:
-        errors.append(f"id '{receipt['id']}' does not match file name '{stem}'")
-    expected_prefix = f"{receipt['date']}_{receipt['store']['chain']}_{receipt['time'].replace(':', '')}"
-    if not receipt["id"].startswith(expected_prefix):
-        errors.append(f"id should start with '{expected_prefix}' (date_chain_HHMM)")
-    try:
-        datetime.strptime(receipt["date"], "%Y-%m-%d")
-    except ValueError:
-        errors.append(f"date '{receipt['date']}' is not a real date")
-    image = receipt["image_path"]
-    if Path(image).stem != receipt["id"]:
-        errors.append(f"image_path '{image}' should be named after the id '{receipt['id']}'")
-    if not image.startswith(f"receipts/{receipt['date'][:4]}/"):
-        errors.append(f"image_path should be in receipts/{receipt['date'][:4]}/")
-    if not (root / image).exists():
-        warnings.append(f"photo not found at {image}")
+    check_names(path, receipt, "receipts", root, errors, warnings)
 
     # --- money
     items = receipt["items"]
@@ -190,11 +249,72 @@ def check_receipt(path, receipt, schema, products, aliases, unit_basis, root):
     return errors, warnings
 
 
+# ---------------------------------------------------------------- one price tag photo
+
+def check_price_tag(path, tag, schema, products, aliases, unit_basis, root):
+    errors, warnings = [], []
+    errors += privacy_problems(tag)
+    schema_errors = schema_problems(tag, schema)
+    errors += schema_errors
+    if schema_errors:
+        return errors, warnings
+
+    check_names(path, tag, "price_tags", root, errors, warnings)
+
+    chain = tag["store"]["chain"]
+    chain_aliases = aliases.get(chain, {})
+    seen_line_numbers = set()
+    for item in tag["items"]:
+        label = f"tag {item['line_no']} '{item['tag_text']}'"
+        if item["line_no"] in seen_line_numbers:
+            errors.append(f"{label}: duplicate line_no")
+        seen_line_numbers.add(item["line_no"])
+
+        regular = item["regular_price"]
+        if item["on_sale"]:
+            if regular is not None and regular <= item["price"]:
+                errors.append(f"{label}: on sale but regular_price ${regular:.2f} is not higher "
+                              f"than price ${item['price']:.2f}")
+        else:
+            if regular is None or abs(regular - item["price"]) > 0.005:
+                errors.append(f"{label}: not on sale, so regular_price must equal price")
+            if item["sale_label"] or item["sale_ends"]:
+                warnings.append(f"{label}: has a sale label/end date but on_sale is false")
+        if item["sale_ends"]:
+            try:
+                datetime.strptime(item["sale_ends"], "%Y-%m-%d")
+            except ValueError:
+                errors.append(f"{label}: sale_ends '{item['sale_ends']}' is not a real date")
+
+        key = item["product_key"]
+        product = products.get(key)
+        if product is None:
+            errors.append(f"{label}: product_key '{key}' is not in products.json")
+        else:
+            check_printed_unit_price(label, item, product, unit_basis, warnings)
+        alias = chain_aliases.get(item["tag_text"])
+        if alias is None:
+            errors.append(f"{label}: no alias in aliases.json under '{chain}' for this tag_text")
+        elif alias != key:
+            errors.append(f"{label}: aliases.json maps this text to '{alias}' but item says '{key}'")
+
+        if item["needs_review"]:
+            warnings.append(f"{label}: NEEDS REVIEW - {item['review_note'] or '(no note)'}")
+        if item["confidence"] == "low":
+            warnings.append(f"{label}: LOW CONFIDENCE - {item['review_note'] or '(no note)'}")
+    return errors, warnings
+
+
+def is_price_tag_file(path):
+    return "price_tags" in Path(path).parts
+
+
 # ---------------------------------------------------------------- main
 
 def validate(files, paths):
     """Return (all_errors, all_warnings) as lists of strings. Also prints a report."""
     schema = load_json(paths.schema)
+    tag_schema = load_json(paths.tag_schema)
     products = load_json(paths.products)
     aliases = load_json(paths.aliases)
     unit_basis = load_json(paths.unit_basis)
@@ -211,8 +331,12 @@ def validate(files, paths):
         except (OSError, json.JSONDecodeError) as e:
             errors, warnings = [f"cannot read JSON: {e}"], []
         else:
-            errors, warnings = check_receipt(path, receipt, schema, products, aliases,
-                                             unit_basis, paths.root)
+            if is_price_tag_file(path):
+                errors, warnings = check_price_tag(path, receipt, tag_schema, products, aliases,
+                                                   unit_basis, paths.root)
+            else:
+                errors, warnings = check_receipt(path, receipt, schema, products, aliases,
+                                                 unit_basis, paths.root)
         report(str(path), errors, warnings)
         all_errors += errors
         all_warnings += warnings
@@ -229,17 +353,17 @@ def report(name, errors, warnings):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Validate receipt JSON files.")
-    parser.add_argument("files", nargs="*", help="receipt JSON files (default: all)")
+    parser = argparse.ArgumentParser(description="Validate receipt and price-tag JSON files.")
+    parser.add_argument("files", nargs="*", help="JSON files (default: all receipts and price tags)")
     parser.add_argument("--root", help="repository root (default: this repo)")
     args = parser.parse_args(argv)
     paths = Paths(args.root)
-    files = [Path(f) for f in args.files] or receipt_files(paths)
+    files = [Path(f) for f in args.files] or (receipt_files(paths) + price_tag_files(paths))
     if not files:
-        print("No receipts found in data/receipts/.")
+        print("No receipts or price tags found.")
     errors, warnings = validate(files, paths)
     print()
-    print(f"{len(files)} receipt(s) checked: {len(errors)} error(s), {len(warnings)} warning(s).")
+    print(f"{len(files)} file(s) checked: {len(errors)} error(s), {len(warnings)} warning(s).")
     return 1 if errors else 0
 
 

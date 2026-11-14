@@ -3,12 +3,16 @@
     "FM 2% MILK GAL": "milk-2pct-gallon-store-brand",
     "BRANDX 2% HALF GAL": "milk-2pct-half-gallon-brandx",
     "BANANAS": "bananas",
-    "FM LG EGGS 12CT": "eggs-large-12ct-store-brand"
+    "FM LG EGGS 12CT": "eggs-large-12ct-store-brand",
+    "FRESHMART 2% MILK 1 GAL": "milk-2pct-gallon-store-brand"
   },
   "valuegrocer": {
     "VG 2% MILK 1GAL": "milk-2pct-gallon-store-brand",
     "VG SPAGHETTI 16OZ": "pasta-spaghetti-16oz-store-brand",
-    "VG PB CREAMY 16OZ": "peanut-butter-creamy-16oz-store-brand"
+    "VG PB CREAMY 16OZ": "peanut-butter-creamy-16oz-store-brand",
+    "VG 2% MILK GALLON": "milk-2pct-gallon-store-brand",
+    "VG WHITE BREAD": "bread-white-sandwich-store-brand",
+    "BRANDZ 55 4K TV": "tv-55in-4k-brandz"
   },
   "cornerfoods": {
     "CF WHT BREAD": "bread-white-sandwich-store-brand",

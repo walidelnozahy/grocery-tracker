@@ -158,7 +158,7 @@ def test_only_named_files_are_checked(root, capsys):
     edit_receipt(root, FRESHMART, lambda r: r.update(subtotal=99.0))
     good = root / "data" / "receipts" / VALUEGROCER
     assert run(root, good) == 0
-    assert "1 receipt(s) checked" in capsys.readouterr().out
+    assert "1 file(s) checked" in capsys.readouterr().out
 
 
 def test_real_seed_data_is_consistent():

@@ -19,10 +19,16 @@ def section(out, title_start):
 
 
 def line_after(text, label):
+    """The label line plus the indented lines under it (the 'paid:' / 'shelf tag:' entries)."""
     lines = text.splitlines()
     for i, line in enumerate(lines):
         if line.strip().startswith(label):
-            return line + "\n" + lines[i + 1]
+            block = [line]
+            for nxt in lines[i + 1:]:
+                if not nxt.startswith("      "):
+                    break
+                block.append(nxt)
+            return "\n".join(block)
     raise AssertionError(f"{label!r} not found in:\n{text}")
 
 
@@ -42,9 +48,10 @@ def test_regular_and_sale_prices_are_separate(root, capsys):
 def test_latest_price_at_each_store(root, capsys):
     _, out = run(root, capsys, "2% milk gallon")
     latest = section(out, "Milk, 2% reduced fat, 1 gallon").split("Latest price at each store:")[1]
-    assert "FreshMart - Elm Street (freshmart): $3.49" in latest
-    assert "ValueGrocer - Campus (valuegrocer): $2.99" in latest and "SALE" in latest
-    assert "CornerFoods - Main St (cornerfoods): $3.29" in latest
+    # FreshMart: a shelf tag on Nov 1 is newer than the Oct 1 purchase.
+    assert "FreshMart - Elm Street (freshmart): $3.19 = $0.0249 per fl oz [shelf tag] on 2026-11-01" in latest
+    assert "ValueGrocer - Campus (valuegrocer): $2.79 = $0.0218 per fl oz SALE [shelf tag]" in latest
+    assert "CornerFoods - Main St (cornerfoods): $3.29 = $0.0257 per fl oz [paid]" in latest
 
 
 def test_without_any_brand_each_product_is_separate(root, capsys):
@@ -78,7 +85,9 @@ def test_history_newest_first(root, capsys):
     block = section(out, "Milk, 2% reduced fat, 1 gallon (store brand)")
     history = block.split("History (newest first):")[1].strip().splitlines()
     dates = [line.split()[0] for line in history]
-    assert dates == ["2026-10-20", "2026-10-01", "2026-07-15"]
+    assert dates == ["2026-11-05", "2026-11-01", "2026-10-20", "2026-10-01", "2026-07-15"]
+    assert history[0].endswith("[shelf tag]  [2026-11-05_valuegrocer_0900]")
+    assert history[2].endswith("[paid]  [2026-10-20_valuegrocer_1805]")
 
 
 def test_since_filters_old_purchases(root, capsys):

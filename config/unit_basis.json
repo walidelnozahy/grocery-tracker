@@ -39,7 +39,9 @@
     "toilet_paper": "100_sheets",
     "paper_towels": "100_sheets",
     "dish_soap": "fl_oz",
-    "laundry_detergent": "fl_oz"
+    "laundry_detergent": "fl_oz",
+    "tvs": "count",
+    "electronics": "count"
   },
   "bases": {
     "fl_oz":      { "dimension": "volume", "base_amount": 1,   "label": "fl oz" },

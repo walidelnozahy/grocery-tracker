@@ -9,6 +9,14 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# Columns of data/price_tags.csv (prices SEEN on shelf tags, not bought), in order.
+TAG_LEDGER_COLUMNS = [
+    "date", "store_chain", "store_name", "product_key", "product_name",
+    "category", "brand", "model", "is_store_brand", "price", "price_unit",
+    "regular_price", "on_sale", "sale_label", "sale_ends", "unit_price",
+    "unit_price_basis", "store_item_id", "tag_id",
+]
+
 # Columns of data/items.csv, in order.
 LEDGER_COLUMNS = [
     "date", "store_chain", "store_name", "product_key", "product_name",
@@ -28,6 +36,9 @@ class Paths:
         self.ledger = self.root / "data" / "items.csv"
         self.unit_basis = self.root / "config" / "unit_basis.json"
         self.schema = self.root / "schema" / "receipt.schema.json"
+        self.price_tags_dir = self.root / "data" / "price_tags"
+        self.tag_ledger = self.root / "data" / "price_tags.csv"
+        self.tag_schema = self.root / "schema" / "price_tag.schema.json"
 
 
 def load_json(path):
@@ -40,6 +51,13 @@ def receipt_files(paths):
     if not paths.receipts_dir.exists():
         return []
     return sorted(paths.receipts_dir.rglob("*.json"))
+
+
+def price_tag_files(paths):
+    """All price-tag JSON files, sorted by name."""
+    if not paths.price_tags_dir.exists():
+        return []
+    return sorted(paths.price_tags_dir.rglob("*.json"))
 
 
 # ---------------------------------------------------------------- units
@@ -123,4 +141,52 @@ def purchase_rows(paths):
                 "_amount": amount,
             })
     rows.sort(key=lambda r: (r["date"], r["receipt_id"], r["_line_no"]))
+    return rows
+
+
+def price_tag_rows(paths):
+    """Every product on every shelf-tag photo as a flat dict, in a stable order.
+
+    A shelf tag is a price you SAW, not a purchase, so these rows are kept
+    separate from purchase_rows() and never count as money spent.
+    """
+    products = load_json(paths.products)
+    unit_basis = load_json(paths.unit_basis)
+    rows = []
+    for path in price_tag_files(paths):
+        tag = load_json(path)
+        for item in tag["items"]:
+            key = item["product_key"]
+            product = products.get(key, {})
+            category = product.get("category", "")
+            basis = basis_for_category(category, unit_basis)
+            # The tag price is for ONE package, or for 1 lb / 1 kg when price_unit says so.
+            one = {"unit_of_sale": item["price_unit"], "quantity": 1}
+            amount = amount_in_basis(one, product, basis, unit_basis)
+            rows.append({
+                "date": tag["date"],
+                "store_chain": tag["store"]["chain"],
+                "store_name": tag["store"]["name"],
+                "product_key": key,
+                "product_name": product.get("name", ""),
+                "category": category,
+                "brand": product.get("brand") or "",
+                "model": product.get("model") or "",
+                "is_store_brand": bool(product.get("is_store_brand", False)),
+                "price": item["price"],
+                "price_unit": item["price_unit"],
+                "regular_price": item["regular_price"],
+                "on_sale": item["on_sale"],
+                "sale_label": item["sale_label"] or "",
+                "sale_ends": item["sale_ends"] or "",
+                "unit_price": item["price"] / amount if amount else None,
+                "unit_price_basis": basis or "",
+                "store_item_id": item["store_item_id"] or "",
+                "tag_id": tag["id"],
+                "_line_no": item["line_no"],
+                "_unit_of_sale": item["price_unit"],
+                "_amount": amount,
+                "quantity": 1,
+            })
+    rows.sort(key=lambda r: (r["date"], r["tag_id"], r["_line_no"]))
     return rows

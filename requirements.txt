@@ -1,2 +1,4 @@
 jsonschema>=4.18
 pytest>=7.0
+Pillow>=10.0
+pillow-heif>=0.16

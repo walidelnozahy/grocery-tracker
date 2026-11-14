@@ -1,4 +1,4 @@
-"""Test setup: build a throwaway copy of the repo layout using FAKE receipts only."""
+"""Test setup: build a throwaway copy of the repo layout using FAKE receipts and price tags only."""
 
 import shutil
 import sys
@@ -24,4 +24,7 @@ def root(tmp_path):
     shutil.copy(FIXTURES / "aliases.json", tmp_path / "data" / "aliases.json")
     for f in (FIXTURES / "receipts").glob("*.json"):
         shutil.copy(f, tmp_path / "data" / "receipts" / f.name)
+    (tmp_path / "data" / "price_tags").mkdir()
+    for f in (FIXTURES / "price_tags").glob("*.json"):
+        shutil.copy(f, tmp_path / "data" / "price_tags" / f.name)
     return tmp_path

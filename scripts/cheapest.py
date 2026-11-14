@@ -1,11 +1,15 @@
-"""Where did I buy something cheapest?
+"""Where did I buy (or see) something cheapest?
 
 Usage:
     python scripts/cheapest.py milk
     python scripts/cheapest.py "2% milk" --any-brand      # compare every product in that category
     python scripts/cheapest.py produce --category         # match the query against categories only
-    python scripts/cheapest.py eggs --since 2026-09-01    # ignore older purchases
-    python scripts/cheapest.py bananas --history          # list every purchase, newest first
+    python scripts/cheapest.py eggs --since 2026-09-01    # ignore older prices
+    python scripts/cheapest.py bananas --history          # list every price, newest first
+
+Two kinds of prices are shown, always labeled:
+  - "paid":      from receipts (things you actually bought)
+  - "shelf tag": from photos of shelf price tags (prices you saw, not bought)
 
 Prices are compared by UNIT price (e.g. $ per fl oz) when the package size
 is known. When it isn't, the per-package price is shown and labeled as such.
@@ -17,9 +21,10 @@ import sys
 from datetime import date
 from difflib import SequenceMatcher
 
-from common import Paths, load_json, purchase_rows
+from common import Paths, load_json, price_tag_rows, purchase_rows
 
 STALE_AFTER_DAYS = 60
+SOURCES = (("paid", "paid"), ("tag", "shelf tag"))
 
 
 # ---------------------------------------------------------------- matching
@@ -39,11 +44,14 @@ def token_matches(query_token, word):
 
 
 def find_products(query, products, category_only=False):
-    """Product keys whose name/key/category contain every word of the query (fuzzy)."""
+    """Product keys whose name/key/category/brand/model contain every word of the query (fuzzy)."""
     query_tokens = tokens(query)
     matches = []
     for key, p in products.items():
-        fields = [p.get("category", "")] if category_only else [key, p.get("name", ""), p.get("category", "")]
+        if category_only:
+            fields = [p.get("category", "")]
+        else:
+            fields = [key, p.get("name", ""), p.get("category", ""), p.get("brand") or "", p.get("model") or ""]
         words = [w for field in fields for w in tokens(field)]
         if query_tokens and all(any(token_matches(q, w) for w in words) for q in query_tokens):
             matches.append(key)
@@ -52,35 +60,49 @@ def find_products(query, products, category_only=False):
 
 # ---------------------------------------------------------------- price observations
 
-def observations(rows):
-    """Split purchases into regular-price and sale-price observations.
-
-    Every purchase tells us the REGULAR (shelf) price at that store on that day,
-    even when it was bought on sale. Only on-sale purchases are SALE observations.
-    """
-    regular, sale = [], []
-    for r in rows:
-        regular.append(make_obs(r, r["regular_price"], from_sale_row=r["on_sale"]))
-        if r["on_sale"]:
-            sale.append(make_obs(r, r["price_paid"]))
-    return regular, sale
-
-
-def make_obs(row, line_price, from_sale_row=False):
+def make_obs(row, line_price, source, from_sale=False):
+    """One price we know about. `line_price` is for the whole receipt line / one tag."""
     amount = row["_amount"]
     return {
         "row": row,
+        "source": source,  # "paid" or "tag"
         "line_price": line_price,
         "unit_price": line_price / amount if amount else None,
         "package_price": line_price / row["quantity"] if row["_unit_of_sale"] == "each" else None,
-        "from_sale_row": from_sale_row,
+        "from_sale": from_sale,
     }
+
+
+def observations(purchases, tags):
+    """Split every known price into REGULAR and SALE observations.
+
+    Purchases: every purchase tells us the regular (shelf) price that day, even if
+    bought on sale; only on-sale purchases are SALE observations.
+    Shelf tags: same idea, using the tag's price and its printed regular price.
+    """
+    regular, sale = [], []
+    for r in purchases:
+        regular.append(make_obs(r, r["regular_price"], "paid", from_sale=r["on_sale"]))
+        if r["on_sale"]:
+            sale.append(make_obs(r, r["price_paid"], "paid"))
+    for t in tags:
+        if t["on_sale"]:
+            sale.append(make_obs(t, t["price"], "tag"))
+            if t["regular_price"] is not None:
+                regular.append(make_obs(t, t["regular_price"], "tag", from_sale=True))
+        else:
+            regular.append(make_obs(t, t["price"], "tag"))
+    return regular, sale
+
+
+def row_id(row):
+    return row.get("receipt_id") or row.get("tag_id")
 
 
 def cheapest(obs_list, single_product):
     """Return (best_obs, how) where how is 'unit' or 'package', or (None, reason)."""
     with_unit = [o for o in obs_list if o["unit_price"] is not None]
-    newest_first = lambda o: (o["row"]["date"], o["row"]["receipt_id"])
+    newest_first = lambda o: (o["row"]["date"], row_id(o["row"]))
     if with_unit:
         best = min(sorted(with_unit, key=newest_first, reverse=True), key=lambda o: o["unit_price"])
         return best, "unit"
@@ -104,16 +126,24 @@ def stale_tag(day, today):
 
 def describe_price(obs, basis_label):
     row = obs["row"]
-    if row["_unit_of_sale"] != "each":
-        text = f"${obs['line_price']:.2f} for {row['quantity']:g} {row['_unit_of_sale']}"
+    unit = row["_unit_of_sale"]
+    if unit != "each" and obs["source"] == "tag":
+        text = f"${obs['line_price']:.2f} per {unit}"
+    elif unit != "each":
+        text = f"${obs['line_price']:.2f} for {row['quantity']:g} {unit}"
     elif row["quantity"] != 1:
         text = f"${obs['line_price']:.2f} for {row['quantity']:g} = ${obs['package_price']:.2f} each"
     else:
         text = f"${obs['line_price']:.2f}"
-    if obs["unit_price"] is not None:
-        text += f" = ${obs['unit_price']:.4f} per {basis_label}"
-    elif row["_unit_of_sale"] == "each":
-        text += " per package (size unknown, no unit price)"
+    if obs["unit_price"] is None:
+        if unit == "each":
+            text += " per package (size unknown, no unit price)"
+        return text
+    if obs["package_price"] is not None and row["_amount"] == row["quantity"]:
+        return text  # one item per package (e.g. a TV): the unit price would just repeat the price
+    if obs["source"] == "tag" and unit != "each" and basis_label == unit:
+        return text  # already says "per lb"
+    text += f" = ${obs['unit_price']:.4f} per {basis_label}"
     return text
 
 
@@ -121,10 +151,59 @@ def where(row):
     return f"{row['store_name']} ({row['store_chain']}) on {row['date']}"
 
 
-def print_report(title, rows, products, unit_basis, today, single_product, show_history):
+def sale_details(obs):
+    row = obs["row"]
+    parts = []
+    if obs["source"] == "tag" and row["sale_label"]:
+        parts.append(row["sale_label"])
+    regular = row["regular_price"]
+    paid = row["price_paid"] if obs["source"] == "paid" else row["price"]
+    if regular is not None:
+        parts.append(f"regular ${regular:.2f}, saves ${regular - paid:.2f}")
+    if obs["source"] == "tag" and row["sale_ends"]:
+        parts.append(f"until {row['sale_ends']}")
+    return f" ({'; '.join(parts)})" if parts else ""
+
+
+def print_best(label, obs_list, single_product, basis_label, today, name_of):
+    print(f"  {label}:")
+    if not obs_list:
+        print("      none recorded")
+        return
+    for source, source_label in SOURCES:
+        subset = [o for o in obs_list if o["source"] == source]
+        if not subset:
+            continue
+        best, how = cheapest(subset, single_product)
+        prefix = f"      {source_label + ':':<11}"
+        if best is None:
+            print(f"{prefix}{how}")
+            continue
+        r = best["row"]
+        if label.startswith("Cheapest SALE"):
+            extra = sale_details(best)
+        elif best["from_sale"]:
+            extra = " (regular price; it was on sale that day)"
+        else:
+            extra = ""
+        print(f"{prefix}{name_of(r)}{describe_price(best, basis_label)}{extra}")
+        print(f"{' ' * 17}at {where(r)}{stale_tag(r['date'], today)}")
+        skipped = sum(1 for o in subset if o["unit_price"] is None) if how == "unit" else 0
+        if skipped:
+            print(f"{' ' * 17}({skipped} price(s) with unknown size not included in this comparison)")
+
+
+def current_obs(row, source):
+    """The price actually charged / shown, for 'latest' and 'history' lists."""
+    price = row["price_paid"] if source == "paid" else row["price"]
+    return make_obs(row, price, source)
+
+
+def print_report(title, purchases, tags, unit_basis, today, single_product, show_history):
     print(f"=== {title} ===")
+    rows = purchases + tags
     if not rows:
-        print("  No purchases recorded.\n")
+        print("  No prices recorded.\n")
         return
     basis = rows[0]["unit_price_basis"]
     basis_label = unit_basis["bases"][basis]["label"] if basis in unit_basis["bases"] else "unit"
@@ -132,57 +211,47 @@ def print_report(title, rows, products, unit_basis, today, single_product, show_
         print(f"  Compared by price per {basis_label}.")
     name_of = (lambda r: "") if single_product else (lambda r: f"{r['product_name']}: ")
 
-    regular, sale = observations(rows)
-    for label, obs_list in (("Cheapest REGULAR price", regular), ("Cheapest SALE price", sale)):
-        if not obs_list:
-            print(f"  {label}: none recorded")
-            continue
-        best, how = cheapest(obs_list, single_product)
-        if best is None:
-            print(f"  {label}: {how}")
-            continue
-        r = best["row"]
-        extra = ""
-        if label.startswith("Cheapest SALE"):
-            extra = f" (regular ${r['regular_price']:.2f}, saved ${r['regular_price'] - r['price_paid']:.2f})"
-        elif best["from_sale_row"]:
-            extra = " (shelf price; it was on sale that day)"
-        print(f"  {label}: {name_of(r)}{describe_price(best, basis_label)}{extra}")
-        print(f"      at {where(r)}{stale_tag(r['date'], today)}")
-        skipped = sum(1 for o in obs_list if o["unit_price"] is None) if how == "unit" else 0
-        if skipped:
-            print(f"      ({skipped} purchase(s) with unknown size not included in this comparison)")
+    regular, sale = observations(purchases, tags)
+    print_best("Cheapest REGULAR price", regular, single_product, basis_label, today, name_of)
+    print_best("Cheapest SALE price", sale, single_product, basis_label, today, name_of)
+
+    # Every price we know, labeled with where it came from.
+    everything = [(r, "paid") for r in purchases] + [(t, "tag") for t in tags]
+    everything.sort(key=lambda x: (x[0]["date"], row_id(x[0]), x[0]["_line_no"]))
 
     print("  Latest price at each store:")
     latest = {}
-    for r in rows:  # rows are sorted oldest -> newest, so later rows win
-        latest[(r["store_chain"], r["store_name"], r["product_key"])] = r
-    for (_, _, _), r in sorted(latest.items(), key=lambda kv: (kv[0][1], kv[0][2])):
-        obs = make_obs(r, r["price_paid"])
+    for r, source in everything:  # oldest -> newest, so later prices win
+        latest[(r["store_name"], r["store_chain"], r["product_key"])] = (r, source)
+    for key in sorted(latest):
+        r, source = latest[key]
+        obs = current_obs(r, source)
         sale_note = " SALE" if r["on_sale"] else ""
+        source_note = "shelf tag" if source == "tag" else "paid"
         print(f"    {r['store_name']} ({r['store_chain']}): {name_of(r)}{describe_price(obs, basis_label)}"
-              f"{sale_note} on {r['date']}{stale_tag(r['date'], today)}")
+              f"{sale_note} [{source_note}] on {r['date']}{stale_tag(r['date'], today)}")
 
     if show_history:
         print("  History (newest first):")
-        for r in sorted(rows, key=lambda r: (r["date"], r["receipt_id"], r["_line_no"]), reverse=True):
-            obs = make_obs(r, r["price_paid"])
-            sale_note = f" SALE (regular ${r['regular_price']:.2f})" if r["on_sale"] else ""
+        for r, source in reversed(everything):
+            obs = current_obs(r, source)
+            sale_note = f" SALE{sale_details(obs)}" if r["on_sale"] else ""
+            source_note = "shelf tag" if source == "tag" else "paid"
             print(f"    {r['date']}  {r['store_name']}: {name_of(r)}{describe_price(obs, basis_label)}"
-                  f"{sale_note}  [{r['receipt_id']}]")
+                  f"{sale_note} [{source_note}]  [{row_id(r)}]")
     print()
 
 
 # ---------------------------------------------------------------- main
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Find where you bought something cheapest.")
-    parser.add_argument("query", help="what to look for, e.g. 'milk' or 'chicken breast'")
+    parser = argparse.ArgumentParser(description="Find where you bought or saw something cheapest.")
+    parser.add_argument("query", help="what to look for, e.g. 'milk', 'chicken breast', 'samsung tv'")
     parser.add_argument("--category", action="store_true", help="match the query against categories only")
     parser.add_argument("--any-brand", action="store_true",
                         help="compare ALL products in the matching category by unit price")
-    parser.add_argument("--since", help="only purchases on or after this date (YYYY-MM-DD)")
-    parser.add_argument("--history", action="store_true", help="list every purchase, newest first")
+    parser.add_argument("--since", help="only prices on or after this date (YYYY-MM-DD)")
+    parser.add_argument("--history", action="store_true", help="list every price, newest first")
     parser.add_argument("--today", help=argparse.SUPPRESS)  # for tests: pretend today is this date
     parser.add_argument("--root", help="repository root (default: this repo)")
     args = parser.parse_args(argv)
@@ -192,10 +261,12 @@ def main(argv=None):
     unit_basis = load_json(paths.unit_basis)
     today = date.fromisoformat(args.today) if args.today else date.today()
 
-    rows = purchase_rows(paths)
+    purchases = purchase_rows(paths)
+    tags = price_tag_rows(paths)
     if args.since:
         date.fromisoformat(args.since)  # fails loudly on a bad date
-        rows = [r for r in rows if r["date"] >= args.since]
+        purchases = [r for r in purchases if r["date"] >= args.since]
+        tags = [r for r in tags if r["date"] >= args.since]
 
     matched = find_products(args.query, products, category_only=args.category)
     if not matched:
@@ -212,21 +283,22 @@ def main(argv=None):
         groups = [(f"{products[k]['name']} [{k}]", {k}, True) for k in matched]
 
     print(f"Today is {today.isoformat()}. Prices older than {STALE_AFTER_DAYS} days are marked STALE.")
+    print("'paid' = from your receipts; 'shelf tag' = from price tag photos (seen, not bought).")
     if args.since:
-        print(f"Only purchases since {args.since}.")
+        print(f"Only prices since {args.since}.")
     print()
     found_any = False
     for title, keys, single in groups:
-        group_rows = [r for r in rows if r["product_key"] in keys]
-        if not group_rows and not single:
-            print(f"=== {title} ===\n  No purchases recorded.\n")
-            continue
-        if not group_rows:
-            continue  # don't clutter output with every never-bought product
+        group_purchases = [r for r in purchases if r["product_key"] in keys]
+        group_tags = [r for r in tags if r["product_key"] in keys]
+        if not group_purchases and not group_tags:
+            if not single:
+                print(f"=== {title} ===\n  No prices recorded.\n")
+            continue  # don't clutter output with every never-seen product
         found_any = True
-        print_report(title, group_rows, products, unit_basis, today, single, args.history)
+        print_report(title, group_purchases, group_tags, unit_basis, today, single, args.history)
     if not found_any:
-        print(f"Matched {len(matched)} product(s) but none have been purchased"
+        print(f"Matched {len(matched)} product(s) but no prices are recorded"
               f"{' since ' + args.since if args.since else ''}: {', '.join(matched)}")
     return 0
 

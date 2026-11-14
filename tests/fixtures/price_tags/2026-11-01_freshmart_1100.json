@@ -1,0 +1,54 @@
+{
+  "id": "2026-11-01_freshmart_1100",
+  "store": {
+    "chain": "freshmart",
+    "name": "FreshMart - Elm Street",
+    "address": "100 Elm St",
+    "city": "Faketown"
+  },
+  "date": "2026-11-01",
+  "time": "11:00",
+  "image_path": "price_tags/2026/2026-11-01_freshmart_1100.jpg",
+  "parsed_at": "2026-11-01T12:00:00Z",
+  "notes": "FAKE test price tag photo showing two tags.",
+  "items": [
+    {
+      "line_no": 1,
+      "tag_text": "FRESHMART 2% MILK 1 GAL",
+      "product_key": "milk-2pct-gallon-store-brand",
+      "price": 3.19,
+      "price_unit": "each",
+      "regular_price": 3.19,
+      "on_sale": false,
+      "sale_label": null,
+      "sale_ends": null,
+      "printed_unit_price": {
+        "value": 0.025,
+        "per": "fl_oz"
+      },
+      "store_item_id": "4011",
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    },
+    {
+      "line_no": 2,
+      "tag_text": "BANANAS",
+      "product_key": "bananas",
+      "price": 0.55,
+      "price_unit": "lb",
+      "regular_price": 0.55,
+      "on_sale": false,
+      "sale_label": null,
+      "sale_ends": null,
+      "printed_unit_price": {
+        "value": 0.55,
+        "per": "lb"
+      },
+      "store_item_id": null,
+      "confidence": "high",
+      "needs_review": false,
+      "review_note": null
+    }
+  ]
+}
